@@ -2,3 +2,10 @@ name: Tim
 super: true
 id: 68d37b3b-198d-4740-bd45-a5b4260d8afb
 password_hash: $2y$10$11vz5vZE.7ursRUoNPDOOewZ5AyPq8ccVPrkL4Os5NrwesNaftDuu
+preferences:
+  collections:
+    hymns:
+      columns:
+        - title
+        - slug
+        - status

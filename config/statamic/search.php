@@ -12,7 +12,7 @@ return [
     |
     */
 
-    'default' => env('STATAMIC_DEFAULT_SEARCH_INDEX', 'default'),
+    'default' => env('STATAMIC_DEFAULT_SEARCH_INDEX', 'hymns'),
 
     /*
     |--------------------------------------------------------------------------
@@ -29,6 +29,11 @@ return [
             'driver' => 'local',
             'searchables' => 'all',
             'fields' => ['title'],
+        ],
+        'hymns' => [
+            'driver' => 'local',
+            'searchables' => 'collection:hymns',
+            'fields' => ['title','greek_lyrics'],
         ],
 
         // 'blog' => [

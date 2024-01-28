@@ -1,0 +1,8 @@
+<div class="search-container">
+    <input wire:model="q" id="search" name="search" placeholder="Ψάξε τίτλο ή θέμα!" type="search" />
+    <ul>
+        {{ results }}
+        <li><a href="{{ url }}">{{ title }}</a></li>
+        {{ /results }}
+    </ul>
+</div>

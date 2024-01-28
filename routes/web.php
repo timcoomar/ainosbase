@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::statamic('example', 'example-view', [
-//    'title' => 'Example'
-// ]);
+use App\Livewire\Livesearch;
+
+Route::statamic('ymnoi/search', 'search');
+Route::statamic('search', 'search');
+
+use App\Livewire\Counter;
+
+Route::get('/counter', Counter::class);

@@ -1,0 +1,28 @@
+{{ partial:partials/nav }}
+
+<main class="hymns-main">
+
+{{ collection:hymns paginate="true" as="posts" sort="date:desc" }}
+
+    <section class="hymns-posts">
+
+    {{ posts }}
+
+        <!-- {{ if post_image }}
+        <article class="post" style="background-image:url('{{ post_image | url }}')">
+        {{ else }}
+        <article class="post">
+        {{ /if }} -->
+        <h3 class="post__title">
+            <a href="{{ permalink }}">{{ title }}</a>
+        </h3>
+
+        </article>
+
+    {{ /posts }}
+
+    </section>
+
+{{ /collection:hymns }}
+
+</main>

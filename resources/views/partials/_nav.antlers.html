@@ -1,4 +1,12 @@
-<nav class="nav-main nav-main--home">
+<nav class="nav-main">
+
+    <form class="search" action="search">
+        <input type="search" name="q">
+    </form>
+
+    {{# livewire:search template='vendor.live-search.livesearch' index='hymns' #}}
+
+
     <ul class="site-menu" role="navigation">
         {{ nav:main_menu }}
         <li data-icon="+" class="menu-item menu-item--s">
@@ -12,9 +20,3 @@
         {{ /nav:main_menu }}
     </ul>
 </nav>
-
-<main class="home-main">
-    <form class="search" action="search">
-        <input type="search" name="q" placeholder="Ψάξε τίτλο ή θέμα..."/>
-    </form>
-</main>

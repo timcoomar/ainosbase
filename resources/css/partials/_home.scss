@@ -1,0 +1,15 @@
+.nav-main--home {
+    justify-content: flex-end;
+}
+
+.home-main {
+    display: grid;
+    place-items: center;
+    min-height: 50svh;
+
+    input[type="search"] {
+        border-radius: 1.5em;
+        font-size: 1.4rem;
+        padding: 1rem 2rem;
+    }
+}

@@ -1,0 +1,25 @@
+{{ partial:partials/nav }}
+
+<main class="search-main">
+
+    <p>Search results for: {{ get:q }}</p>
+    <div>
+
+        {{ search:results }}
+
+            {{ if no_results }}
+
+                <p>No results</p>
+
+            {{ else }}
+
+                <h2><a href="{{ url }}">{{ title }}</a></h2>
+                <!-- <div>{{ (title ?? greek_lyrics ?? english_lyrics) | safe_truncate(140) }}</div> -->
+
+            {{ /if }}
+
+        {{ /search:results }}
+
+    </div>
+
+</main>

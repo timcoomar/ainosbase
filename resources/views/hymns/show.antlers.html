@@ -1,0 +1,52 @@
+{{ partial:partials/nav }}
+
+<main class="hymn-main">
+    <section class="greek-version">
+        <h2 class="hymn-title">{{ title }}</h2> <button onclick="copyLyrics()">C</button>
+        <article class="greek-lyrics" id="greekLyrics">
+            {{ greek_lyrics }}
+        </article>
+    </section>
+    <section class="hymn-media">
+        {{ if greek_chords }}
+            <div class="greek-chords">
+                {{ greek_chords }}
+                    <a href="{{ url }}">Κατέβασε τις συγχωρδίες</a>
+                {{ /greek_chords }}
+            </div>
+        {{ /if }}
+        <figure class="youtube-english">
+            <iframe src="{{ youtube_english | embed_url }}"></iframe>
+        </figure>
+    </section>
+</main>
+
+<script>
+
+// Plain Text Version:
+
+    // const copyLyrics = async () => {
+    //     let text = document.querySelector('#greekLyrics').textContent;
+    //     console.log(text);
+    //     try {
+    //         await navigator.clipboard.writeText(text);
+    //         console.log('Content copied to clipboard');
+    //     } catch (err) {
+    //         console.error('Failed to copy: ', err);
+    //     }
+    // }
+
+// Rich Text Version:
+const copyLyrics = async () => {
+
+    const content = document.querySelector('#greekLyrics').innerHTML;
+    console.log(content);
+    const blob = new Blob([content], {type: 'text/html'});
+    const richTextInput = new ClipboardItem({'text/html' : blob});
+    await navigator.clipboard.write([richTextInput]).then(() => {
+        //alert("Copied to clipboard");
+    });
+
+}
+
+</script>

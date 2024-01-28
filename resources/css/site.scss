@@ -1,0 +1,19 @@
+:root {
+    --text-color:   rgba(0,0,0,0.9);
+    --link-color:   black;
+    --hover-color:  rgba(0,0,0,.6);
+}
+
+//@import 'partials/reset';
+@import 'partials/normalize';
+
+body {
+    font-family:    'Victor Mono', monospace;
+    min-height:     100svh;
+    color:          var(--text-color);
+}
+
+@import 'partials/nav';
+@import 'partials/home';
+@import 'partials/hymn';
+@import 'partials/search';

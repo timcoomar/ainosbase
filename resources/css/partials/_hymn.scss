@@ -1,0 +1,36 @@
+.hymns-main {
+    display: grid;
+    place-items: center;
+    grid-template-columns: repeat(auto-fit, 400px);
+}
+
+.hymn-main {
+    display:        grid;
+    padding-top:    1.5rem;
+    //place-items:    center;
+    grid-template-columns: repeat(auto-fit, 400px);
+    justify-content: center;
+}
+
+.hymn-title {
+    padding-bottom: 1rem;
+    margin-bottom:  .8rem;
+    border-bottom: 1px solid var(--text-color);
+    font-weight: 800;
+    display: inline-block;
+}
+
+.hymn-media {
+    & > * {
+        margin-bottom: 1.5rem;
+    }
+    a[href*="pdf"] {
+        border-bottom: 1px dashed gray;
+    }
+    [class*="youtube"] {
+        margin: 0;
+        iframe {
+            border: 0;
+        }
+    }
+}

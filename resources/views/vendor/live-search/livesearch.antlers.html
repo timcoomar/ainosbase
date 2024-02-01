@@ -1,6 +1,6 @@
 <div class="search-container">
     <input wire:model="q" id="search" name="search" placeholder="Ψάξε τίτλο ή θέμα!" type="search" />
-    <ul>
+    <ul class="livesearch-results">
         {{ results }}
         <li><a href="{{ url }}">{{ title }}</a></li>
         {{ /results }}

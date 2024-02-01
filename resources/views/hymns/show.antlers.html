@@ -1,4 +1,22 @@
-{{ partial:partials/nav }}
+<nav class="nav-main">
+
+    {{ livewire:search template='vendor.live-search.livesearch' index='hymns' }}
+
+    <ul class="site-menu" role="navigation">
+        {{ nav:main_menu }}
+        <li data-icon="+" class="menu-item menu-item--s">
+            <a href="{{ url }}" {{ if is_current || is_parent }} class="current"{{ /if }}>{{ title }}</a>
+            {{ if children }}
+                <ul class="sub-menu">
+                    {{ *recursive children* }}
+                </ul>
+            {{ /if }}
+        </li>
+        {{ /nav:main_menu }}
+    </ul>
+
+</nav>
+
 
 <main class="hymn-main">
     <section class="greek-version">

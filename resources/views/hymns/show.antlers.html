@@ -1,10 +1,10 @@
 <nav class="nav-main">
 
     <figure class="site-logo">
-        <img src="{{ config:app:url }}/assets/ainos-logo.jpg" />
+        <a href="{{ site:url }}"><img src="{{ config:app:url }}/assets/ainos-logo.jpg" /></a>
     </figure>
 
-    {{ livewire:search template='vendor.live-search.livesearch' index='hymns' }}
+    {{ livewire:search template='livewire.livesearch' index='hymns' }}
 
     <ul class="site-menu" role="navigation">
         {{ nav:main_menu }}
@@ -24,7 +24,10 @@
 
 <main class="hymn-main">
     <section class="greek-version">
-        <h2 class="hymn-title">{{ title }}</h2> <button onclick="copyLyrics()">C</button>
+        <div class="hymn-title-container">
+            <h2 class="hymn-title">{{ title }}</h2>
+            <button onclick="copyLyrics()"> <img src="{{ config:app:url }}/assets/copy.svg"></button>
+        </div>
         <article class="greek-lyrics" id="greekLyrics">
             {{ greek_lyrics }}
         </article>

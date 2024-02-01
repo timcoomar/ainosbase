@@ -1,12 +1,12 @@
 <nav class="nav-main nav-main--home">
 
     <figure class="site-logo">
-        <img src="{{ config:app:url }}/assets/ainos-logo.jpg" />
+        <a href="{{ site:url }}"><img src="{{ config:app:url }}/assets/ainos-logo.jpg"/></a>
     </figure>
 
     <ul class="site-menu" role="navigation">
         {{ nav:main_menu }}
-        <li data-icon="+" class="menu-item menu-item--s">
+        <li>
             <a href="{{ url }}" {{ if is_current || is_parent }} class="current"{{ /if }}>{{ title }}</a>
             {{ if children }}
                 <ul class="sub-menu">
@@ -19,7 +19,5 @@
 </nav>
 
 <main class="home-main">
-    <form class="search" action="search">
-        <input type="search" name="q" placeholder="Ψάξε τίτλο ή θέμα..."/>
-    </form>
+    {{ livewire:search template='livewire.livesearch' index='hymns' }}
 </main>

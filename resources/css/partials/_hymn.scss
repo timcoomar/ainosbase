@@ -1,15 +1,64 @@
+// Index page => views/hymns/index.antlers.html
+
 .hymns-main {
     display: grid;
     place-items: center;
-    grid-template-columns: repeat(auto-fit, 400px);
+    grid-template-columns: repeat(auto-fill, 400px);
+    grid-gap: 1rem;
+    padding-top:    3.5rem;
+    padding-left:   3.5rem;
+    padding-right:  3.5rem;
+    padding-bottom: 3rem;
 }
+
+.hymns-posts {
+    //background: red;
+    width: 100%;
+}
+
+.post__title {
+    font-weight: 400;
+    margin: 0 0 .8rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    > a {
+        display: block;
+        padding: .4rem 0;
+    }
+}
+
+// Single Page => views/hymns/show.antlers.html
 
 .hymn-main {
     display:        grid;
-    padding-top:    1.5rem;
+    padding-top:    3.5rem;
+    padding-left:   6vw;
+    padding-right:  6vw;
+    padding-bottom: 5vw;
     //place-items:    center;
     grid-template-columns: repeat(auto-fit, 400px);
     justify-content: center;
+    grid-gap:       1.5rem;
+}
+
+.hymn-title-container {
+    position: relative;
+
+    button {
+        background: none;
+        border: 0;
+        position: absolute;
+        width: 10%;
+        left: calc(-10% - 4px);
+        top: 4px;
+
+        &:hover {
+            cursor: pointer;
+        }
+
+        img {
+            max-width: 100%;
+        }
+    }
 }
 
 .hymn-title {
@@ -18,6 +67,7 @@
     border-bottom: 1px solid var(--text-color);
     font-weight: 800;
     display: inline-block;
+    margin-top: 0;
 }
 
 .hymn-media {
@@ -31,6 +81,19 @@
         margin: 0;
         iframe {
             border: 0;
+        }
+    }
+
+    a[href$=".pdf"] {
+        &::before {
+            content: "";
+            display: inline-block;
+            aspect-ratio: 1/1;
+            padding: 1rem;
+            background-image: url('http://ainosbase.test/assets/pdf.svg');
+            background-size: contain;
+            margin-right: .4rem;
+            margin-bottom: -.4rem;
         }
     }
 }

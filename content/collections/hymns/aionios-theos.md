@@ -24,7 +24,7 @@ greek_lyrics: |-
   στον Σωτήρα μου, βρίσκω τη χαρά.
   Μπρος στο θρόνο Σου,
   προσδοκώ να ’ρθω,
-  γιατί είσαι, o Αιώνιος Θεός..
+  γιατί είσαι, o Αιώνιος Θεός.
 greek_chords:
   - greek-chords/aiwnios-oeos-chords.pdf
 english_lyrics: |-
@@ -55,5 +55,5 @@ english_lyrics: |-
   _None above Him, none before Him..._
 youtube_english: 'https://www.youtube.com/watch?v=cJUtAw21qAM'
 updated_by: 68d37b3b-198d-4740-bd45-a5b4260d8afb
-updated_at: 1706399838
+updated_at: 1706801981
 ---

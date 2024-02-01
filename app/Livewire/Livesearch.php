@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use Jonassiewertsen\LiveSearch\Http\Livewire\Search;
 
-class SearchHymns extends Search
+class Livesearch extends Search
 {
     public $template;
     public $index;

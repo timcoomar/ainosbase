@@ -8,9 +8,10 @@
 @import 'partials/normalize';
 
 body {
-    font-family:    'Victor Mono', monospace;
+    font-family: 'Sofia Sans', sans-serif;
     min-height:     100svh;
     color:          var(--text-color);
+    font-size: 1.4rem;
 }
 
 @import 'partials/nav';

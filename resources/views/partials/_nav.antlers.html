@@ -1,14 +1,14 @@
 <nav class="nav-main">
 
     <figure class="site-logo">
-        <img src="{{ config:app:url }}/assets/ainos-logo.jpg">
+        <a href="{{ site:url }}"><img src="{{ config:app:url }}/assets/ainos-logo.jpg"/></a>
     </figure>
 
-    <form class="search" action="search">
+    <!-- <form class="search" action="search">
         <input type="search" name="q">
-    </form>
+    </form> -->
 
-    {{# livewire:search template='vendor.live-search.livesearch' index='hymns' #}}
+    {{ livewire:search template='livewire.livesearch' index='hymns' }}
 
 
     <ul class="site-menu" role="navigation">

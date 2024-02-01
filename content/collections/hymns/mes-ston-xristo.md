@@ -39,5 +39,6 @@ greek_lyrics: |-
   και μέχρι να ‘ρθει να Τον δω
   στη δύναμή Του θ’ ακουμπώ.
 updated_by: 68d37b3b-198d-4740-bd45-a5b4260d8afb
-updated_at: 1706404851
+updated_at: 1706520350
+youtube_greek: 'https://www.youtube.com/watch?v=dDWhQX1q6ic'
 ---

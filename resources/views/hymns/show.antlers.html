@@ -15,9 +15,16 @@
                 {{ /greek_chords }}
             </div>
         {{ /if }}
-        <figure class="youtube-english">
-            <iframe src="{{ youtube_english | embed_url }}"></iframe>
-        </figure>
+        {{ if youtube_english }}
+            <figure class="youtube-english">
+                <iframe src="{{ youtube_english | embed_url }}"></iframe>
+            </figure>
+        {{ /if }}
+        {{ if youtube_greek }}
+            <figure class="youtube-greek">
+                <iframe src="{{ youtube_greek | embed_url }}"></iframe>
+            </figure>
+        {{ /if }}
     </section>
 </main>
 

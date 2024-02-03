@@ -351,6 +351,10 @@ template {
 
 // My code
 
+body {
+    font-size: clamp(1.3rem, 3vw, 1.7rem);
+}
+
 a {
     text-decoration:      none;
     color:                var(--link-color);

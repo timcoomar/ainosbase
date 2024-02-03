@@ -1,14 +1,22 @@
 // Index page => views/hymns/index.antlers.html
 
 .hymns-main {
-    display: grid;
-    place-items: center;
-    grid-template-columns: repeat(auto-fill, 400px);
-    grid-gap: 1rem;
+    //display: grid;
+    //place-items: center;
+    //grid-template-columns: repeat(auto-fill, 450px);
+    //grid-gap: 1rem;
     padding-top:    3.5rem;
     padding-left:   3.5rem;
     padding-right:  3.5rem;
     padding-bottom: 3rem;
+    columns:        2;
+    column-gap:     2.5rem;
+}
+
+@media (max-width: 650px) {
+    .hymns-main {
+        columns: 1;
+    }
 }
 
 .hymns-posts {
@@ -35,9 +43,16 @@
     padding-right:  6vw;
     padding-bottom: 5vw;
     //place-items:    center;
-    grid-template-columns: repeat(auto-fit, 400px);
+    grid-template-columns: repeat(auto-fit, 450px);
     justify-content: center;
     grid-gap:       1.5rem;
+}
+
+@media (max-width: 500px) {
+    .hymn-main {
+        grid-template-columns: 1fr;
+        justify-content: center;
+    }
 }
 
 .hymn-title-container {
@@ -46,9 +61,8 @@
     button {
         background: none;
         border: 0;
-        position: absolute;
-        width: 10%;
-        left: calc(-10% - 4px);
+        position: relative;
+        width: clamp(2.2rem, 4vw, 3rem);
         top: 4px;
 
         &:hover {
@@ -71,6 +85,10 @@
 }
 
 .hymn-media {
+    &.full-width {
+        grid-column: 1/-1;
+        grid-row: 1/2;
+    }
     & > * {
         margin-bottom: 1.5rem;
     }
@@ -78,9 +96,12 @@
         border-bottom: 1px dashed gray;
     }
     [class*="youtube"] {
+        aspect-ratio: 16/9;
         margin: 0;
         iframe {
             border: 0;
+            width: 100%;
+            height: 100%;
         }
     }
 

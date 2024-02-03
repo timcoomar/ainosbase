@@ -47,7 +47,21 @@
 
 .page-home {
     .livesearch-results {
-        max-height: 30vh;
-        max-height: 30svh;
+        max-height: 50vh;
+        max-height: 50svh;
+        overflow: scroll;
+        padding-bottom: 2rem;
+    }
+}
+
+@media (max-width: 650px) {
+    .page-home {
+        .search-container {
+            min-width: 65vw;
+        }
+        .livesearch-results {
+            max-height: 75vh;
+            max-height: 75svh;
+        }
     }
 }

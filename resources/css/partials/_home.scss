@@ -8,6 +8,21 @@
     min-height: 70svh;
 
     input[type="search"] {
-        font-size: 1.5rem !important;
+        font-size: 1.5rem;
+        border: 1px solid rgba(0,0,0,0.3);
+        transition: all .5s ease-out;
+
+        &:hover, &:focus {
+            transform: scale(1.2);
+            border: 1px solid rgba(0,0,0,1);
+        }
+    }
+}
+
+@media (max-width:650px) {
+    .home-main {
+        min-height: 80svh;
+        place-items: reset;
+        align-items: start;
     }
 }

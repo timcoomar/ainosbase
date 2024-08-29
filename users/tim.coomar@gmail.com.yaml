@@ -1,7 +1,7 @@
 name: Tim
 super: true
 id: 68d37b3b-198d-4740-bd45-a5b4260d8afb
-password_hash: $2y$10$11vz5vZE.7ursRUoNPDOOewZ5AyPq8ccVPrkL4Os5NrwesNaftDuu
+password_hash: $2y$10$pgZTjtEFzgt5ySXijOkMG.6p1cwitxh3eIql3MQ2Rt7pWAT0LHSxO
 preferences:
   collections:
     hymns:

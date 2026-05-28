@@ -1,0 +1,31 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Hetzner
+        uses: appleboy/ssh-action@v1
+        with:
+          host: 195.201.216.32
+          username: ploi
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/ploi/ainosbase.gr
+
+            # Commit any pending content changes before pulling to avoid conflicts
+            if [[ -n $(git status --porcelain content/ users/) ]]; then
+              git add content/ users/
+              git commit -m "Auto-sync content before deploy [$(date '+%Y-%m-%d %H:%M')]"
+              git push origin main
+            fi
+
+            git pull origin main
+            composer install --no-dev --optimize-autoloader
+            npm ci && npm run build
+            php artisan cache:clear
+            php artisan statamic:stache:clear

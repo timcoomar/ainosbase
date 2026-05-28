@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use Jonassiewertsen\LiveSearch\Http\Livewire\Search;
+use MarcoRieser\LiveSearch\Http\Livewire\Search;
 
 class Livesearch extends Search
 {

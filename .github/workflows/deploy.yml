@@ -12,10 +12,10 @@ jobs:
         uses: appleboy/ssh-action@v1
         with:
           host: 195.201.216.32
-          username: ploi
+          username: deploy
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/ploi/ainosbase.gr
+            cd /var/www/ainosbase.gr
 
             # Commit any pending content changes before pulling to avoid conflicts
             if [[ -n $(git status --porcelain content/ users/) ]]; then

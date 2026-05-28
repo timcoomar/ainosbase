@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Statamic\Facades\Entry;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,3 +16,23 @@ use Illuminate\Support\Facades\Route;
 
 Route::statamic('ymnoi/search', 'search');
 Route::statamic('search', 'search');
+
+Route::statamic('presenter', 'presenter/builder', ['title' => 'Setlist Builder']);
+
+Route::get('/presenter/present', fn() => view('presenter.present'));
+
+Route::get('/api/hymns', function () {
+    $hymns = Entry::query()
+        ->where('collection', 'hymns')
+        ->get()
+        ->mapWithKeys(fn($entry) => [
+            $entry->slug() => [
+                'slug'           => $entry->slug(),
+                'title'          => $entry->get('title'),
+                'greek_lyrics'   => $entry->get('greek_lyrics'),
+                'english_lyrics' => $entry->get('english_lyrics'),
+            ],
+        ]);
+
+    return response()->json($hymns);
+});

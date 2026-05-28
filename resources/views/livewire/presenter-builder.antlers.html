@@ -1,0 +1,84 @@
+<div class="presenter-builder">
+
+    {{# ── Left panel: search & add ── #}}
+    <div class="builder-panel builder-search-panel">
+        <h2 class="greek-uppercase" wire:ignore>Επιλογή Ύμνων</h2>
+
+        <div class="builder-search">
+            <input wire:model.live="q"
+                   type="search"
+                   placeholder="τίτλος ή στίχοι..."
+                   autocomplete="off" />
+        </div>
+
+        {{ if results }}
+        <ul class="builder-results">
+            {{ results }}
+            <li>
+                <span class="result-title">{{ title }}</span>
+                <button class="btn-add"
+                        wire:click="addHymn('{{ slug }}')"
+                        {{ if already_added }}disabled{{ /if }}
+                        title="{{ if already_added }}Ήδη στη λίστα{{ else }}Προσθήκη{{ /if }}">+</button>
+            </li>
+            {{ /results }}
+        </ul>
+        {{ elseif q | length >= 2 }}
+        <p class="builder-hint">Δεν βρέθηκαν αποτελέσματα.</p>
+        {{ else }}
+        <p class="builder-hint">Πληκτρολογήστε 2+ χαρακτήρες για αναζήτηση.</p>
+        {{ /if }}
+    </div>
+
+    {{# ── Right panel: setlist & language ── #}}
+    <div class="builder-panel builder-setlist-panel">
+        <h2 class="greek-uppercase" wire:ignore>Λίστα</h2>
+
+        <div class="builder-language">
+            <label>
+                <input type="radio" wire:model.live="language" value="greek" />
+                Ελληνικά
+            </label>
+            <label>
+                <input type="radio" wire:model.live="language" value="english" />
+                English
+            </label>
+            <label>
+                <input type="radio" wire:model.live="language" value="both" />
+                Και τα δύο
+            </label>
+        </div>
+
+        {{ if setlist_indexed }}
+        <ul class="setlist-items">
+            {{ setlist_indexed }}
+            <li>
+                <span class="setlist-number">{{ number }}.</span>
+                <span class="setlist-title">{{ title }}</span>
+                <button class="btn-order"
+                        wire:click="moveUp({{ pos }})"
+                        {{ if is_first }}disabled{{ /if }}
+                        title="Μετακίνηση πάνω">↑</button>
+                <button class="btn-order"
+                        wire:click="moveDown({{ pos }})"
+                        {{ if is_last }}disabled{{ /if }}
+                        title="Μετακίνηση κάτω">↓</button>
+                <button class="btn-remove"
+                        wire:click="removeHymn({{ pos }})"
+                        title="Αφαίρεση">×</button>
+            </li>
+            {{ /setlist_indexed }}
+        </ul>
+
+        <a href="{{ launch_url }}"
+           target="_blank"
+           rel="noopener"
+           class="btn-launch">
+            Έναρξη Παρουσίασης →
+        </a>
+        {{ else }}
+        <p class="setlist-empty">Αναζητήστε και προσθέστε ύμνους για να ξεκινήσετε.</p>
+        {{ /if }}
+    </div>
+
+</div>

@@ -28,7 +28,8 @@ apt install -y git curl wget unzip software-properties-common ufw
 
 echo "→ Configuring firewall..."
 ufw allow OpenSSH
-ufw allow 'Nginx Full'
+ufw allow 80/tcp
+ufw allow 443/tcp
 ufw --force enable
 
 # ── PHP ───────────────────────────────────

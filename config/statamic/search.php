@@ -25,11 +25,6 @@ return [
 
     'indexes' => [
 
-        'default' => [
-            'driver' => 'local',
-            'searchables' => 'all',
-            'fields' => ['title'],
-        ],
         'hymns' => [
             'driver' => 'local',
             'searchables' => 'collection:hymns',

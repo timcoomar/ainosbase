@@ -8,6 +8,7 @@ export default defineConfig({
             input: [
                 "resources/css/site.scss",
                 "resources/js/site.js",
+                "resources/js/presenter.js",
 
                 // Control Panel assets.
                 // https://statamic.dev/extending/control-panel#adding-css-and-js-assets

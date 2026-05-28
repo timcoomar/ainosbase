@@ -24,6 +24,9 @@ jobs:
               git push origin main
             fi
 
+            # Discard any other local changes (e.g. package-lock.json) that would block the pull
+            git checkout -- .
+
             git pull origin main
             composer install --no-dev --optimize-autoloader
             npm ci && npm run build

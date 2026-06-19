@@ -21,6 +21,7 @@ jobs:
             if [[ -n $(git status --porcelain content/ users/) ]]; then
               git add content/ users/
               git commit -m "Auto-sync content before deploy [$(date '+%Y-%m-%d %H:%M')]"
+              git pull --rebase origin main
               git push origin main
             fi
 

@@ -33,23 +33,21 @@
 
 @media (max-width: 700px) {
     .nav-main {
-        // Wrap logo / search / site-menu onto two rows at small viewports:
-        //   row 1: search input (full width, pulled to top via order:-1)
-        //   row 2: logo + site-menu (centered horizontally)
-        // This avoids both the original 3-column grid overflow and the
-        // full-vertical-stack that pushes call-to-action content too far down.
+        // Three rows at small viewports, vertically stacked:
+        //   row 1: search input (full width, pulled to top via order: -1)
+        //   row 2: site-logo (centered)
+        //   row 3: site-menu (centered, below the logo)
+        // No HTML reordering — the visual order comes from flex + order.
         display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
+        flex-direction: column;
         align-items: center;
-        gap: 1rem;
+        gap: .8rem;
         padding: 1.1rem 1rem;
 
         // The Livewire search renders as <div class="search-container">.
         // Pull it to the front of the flex order so it lands on the first row.
         .search-container {
             order: -1;
-            flex: 1 1 100%;
             width: 100%;
         }
 
@@ -58,15 +56,26 @@
             box-sizing: border-box;
             transform: none !important;  // hover scale would push past viewport
         }
+
+        // Source order is: logo, search, menu. With search pulled to the
+        // front via order:-1, the natural flow becomes: search, logo, menu.
+        // Push the menu below the logo explicitly so the visual order is
+        // unambiguous and doesn't depend on source order.
+        .site-menu {
+            order: 1;
+        }
     }
 
     .nav-main--home {
-        // Home variant has only logo + menu (no search). Just center them.
+        // Home variant has only logo + menu (no search). Stack menu below logo.
         display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
+        flex-direction: column;
         align-items: center;
         gap: .8rem;
+
+        .site-menu {
+            order: 1;
+        }
     }
 }
 
@@ -110,7 +119,7 @@ nav > ul {
     @media (max-width: 700px) {
         // At small viewports `15vw` makes the logo unreadably small (~30px at
         // 200px width). Lift the cap so the logo keeps a sensible size on the
-        // wrapped layout without overflowing.
+        // stacked layout without overflowing.
         max-width: 40vw;
         max-height: 3rem;
         margin-top: 0;

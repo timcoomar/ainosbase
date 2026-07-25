@@ -25,6 +25,129 @@ function applyGreekUppercase() {
 
 document.addEventListener('DOMContentLoaded', applyGreekUppercase);
 
+// ── Setlist persistence (localStorage-backed) ───────────────────────────────
+//
+// The presenter builder page exposes a launch URL containing a base64 payload
+// that encodes {hymns: [{slug, title}], lang}. We reuse that exact payload
+// format for saved setlists in localStorage under the key `ainos_setlists`.
+// A "Save" button reads the current launch URL's hash and stores it under
+// a user-named entry. "Load" dispatches a Livewire event with the payload;
+// "Open" launches the presenter directly; "Delete" removes the entry.
+
+(function () {
+    var STORAGE_KEY = 'ainos_setlists';
+    var MAX_SAVED = 20;
+
+    function getStore() {
+        try {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') || {};
+        } catch (e) { return {}; }
+    }
+    function writeStore(store) {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(store)); } catch (e) {}
+    }
+
+    function currentPayloadFromDoc() {
+        var link = document.querySelector('.btn-launch');
+        if (!link) return null;
+        var hash = (link.getAttribute('href') || '').split('#')[1] || '';
+        return hash || null;
+    }
+
+    function fmtDate(iso) {
+        try {
+            var d = new Date(iso);
+            return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        } catch (e) { return ''; }
+    }
+
+    function renderSavedList() {
+        var section = document.getElementById('saved-setlists');
+        if (!section) return;
+        var list = document.getElementById('saved-list');
+        var empty = section.querySelector('.saved-empty');
+        var tmpl = document.getElementById('saved-row-tmpl');
+        var store = getStore();
+        var names = Object.keys(store).sort(function (a, b) {
+            return (store[b].saved_at || '').localeCompare(store[a].saved_at || '');
+        });
+
+        list.innerHTML = '';
+        if (!names.length) {
+            section.hidden = false;
+            if (empty) empty.hidden = false;
+            return;
+        }
+        if (empty) empty.hidden = true;
+        section.hidden = false;
+
+        names.forEach(function (name) {
+            var entry = store[name];
+            var row = tmpl.content.firstElementChild.cloneNode(true);
+            row.dataset.name = name;
+            row.querySelector('.saved-name').textContent = name;
+            row.querySelector('.saved-meta').textContent = entry.count + ' ύμνοι · ' + fmtDate(entry.saved_at);
+            row.querySelector('.btn-saved-open').href = '/presenter/present#' + entry.payload;
+            row.querySelector('.btn-saved-load').addEventListener('click', function () {
+                if (window.Livewire && typeof window.Livewire.dispatch === 'function') {
+                    window.Livewire.dispatch('load-setlist', { payload: entry.payload });
+                }
+                row.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+            row.querySelector('.btn-saved-delete').addEventListener('click', function () {
+                if (!confirm('Διαγραφή "' + name + '";')) return;
+                var s = getStore();
+                delete s[name];
+                writeStore(s);
+                renderSavedList();
+            });
+            list.appendChild(row);
+        });
+    }
+
+    function initSaveButton() {
+        var btn = document.getElementById('btn-save-setlist');
+        if (!btn) return;
+        btn.addEventListener('click', function () {
+            var payload = currentPayloadFromDoc();
+            if (!payload) return;
+            var name = prompt('Όνομα λίστας:');
+            if (!name) return;
+            name = name.trim();
+            if (!name) return;
+            var store = getStore();
+            if (store[name] && !confirm('Υπάρχει ήδη λίστα "' + name + '". Αντικατάσταση;')) return;
+            var count = 0;
+            try {
+                var data = JSON.parse(atob(payload));
+                count = Array.isArray(data.hymns) ? data.hymns.length : 0;
+            } catch (e) {}
+            store[name] = { payload: payload, saved_at: new Date().toISOString(), count: count };
+            writeStore(store);
+            // Cap at MAX_SAVED: drop oldest beyond cap
+            var names = Object.keys(store).sort(function (a, b) {
+                return (store[a].saved_at || '').localeCompare(store[b].saved_at || '');
+            });
+            while (names.length > MAX_SAVED) {
+                delete store[names.shift()];
+                writeStore(store);
+            }
+            renderSavedList();
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        initSaveButton();
+        renderSavedList();
+    });
+
+    // Re-render the saved list after Livewire navigations/refreshes that might
+    // swap the builder markup (wire:ignore keeps the section, but ensure
+    // Save button stays wired if Livewire re-renders the launch row).
+    document.addEventListener('livewire:navigated', renderSavedList);
+    document.addEventListener('livewire:load', renderSavedList);
+})();
+
 // ── Lyrics view toggle + extended copy-on-clipboard (hymn show page) ────────
 //
 // Reads the initial view from html[data-lyrics-view] (set by the early inline

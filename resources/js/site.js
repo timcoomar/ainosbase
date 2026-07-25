@@ -207,22 +207,105 @@ document.addEventListener('DOMContentLoaded', applyGreekUppercase);
                 setView(btn.dataset.view);
             });
         });
+    }
 
-        var copyBtn = document.querySelector('.copy-btn');
-        if (copyBtn) {
-            copyBtn.addEventListener('click', async function () {
-                var content = visibleLyricsHTML();
-                if (!content) return;
-                try {
-                    var blob = new Blob([content], {type: 'text/html'});
-                    var item = new ClipboardItem({'text/html': blob});
-                    await navigator.clipboard.write([item]);
-                } catch (err) {
-                    console.error('Failed to copy: ', err);
-                }
-            });
+    // ── Copy lyrics button (sits in the same .hymn-title-actions row) ──────
+    // Writes both text/html (preserves <p>+<em> for rich paste targets) and
+    // text/plain (for plain-text editors); falls back to writeText() if the
+    // ClipboardItem API rejects (older Firefox, insecure context). Shows a
+    // transient "Αντιγράφηκαν στίχοι" / "Αποτυχία" feedback chip — no alert().
+
+    function paragraphText(container) {
+        if (!container) return '';
+        var ps = container.querySelectorAll('p');
+        if (!ps.length) return container.textContent.trim();
+        return Array.prototype.map.call(ps, function (p) {
+            return p.textContent.replace(/\s+\n/g, ' ').replace(/\n/g, ' ').trim();
+        }).join('\n\n');
+    }
+
+    function visibleLyricsContent() {
+        var view = currentView();
+        var greek = document.querySelector('#greekLyrics');
+        var english = document.querySelector('#englishLyrics');
+        var blocksHTML = [];
+        var blocksText = [];
+
+        if (view !== 'english' && greek) {
+            blocksHTML.push(greek.innerHTML);
+            blocksText.push(paragraphText(greek));
         }
+        if (view !== 'greek' && english) {
+            blocksHTML.push(english.innerHTML);
+            blocksText.push(paragraphText(english));
+        }
+        return {
+            html: blocksHTML.join('<br><br>'),
+            text: blocksText.join('\n\n')
+        };
+    }
+
+    function showCopyFeedback(message) {
+        var feedback = document.getElementById('copy-feedback');
+        if (!feedback) return;
+        feedback.textContent = message;
+        feedback.classList.add('is-visible');
+        clearTimeout(showCopyFeedback._timer);
+        showCopyFeedback._timer = setTimeout(function () {
+            feedback.classList.remove('is-visible');
+            feedback.textContent = '';
+        }, 2000);
+    }
+
+    async function copyLyricsToClipboard() {
+        var content = visibleLyricsContent();
+        if (!content.text && !content.html) {
+            showCopyFeedback('Κενό');
+            return;
+        }
+
+        // Preferred path: ClipboardItem with both text/html and text/plain,
+        // so the paste destination picks whichever MIME it supports.
+        if (typeof ClipboardItem !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.write === 'function') {
+            try {
+                var htmlBlob = new Blob([content.html], {type: 'text/html'});
+                var textBlob = new Blob([content.text], {type: 'text/plain'});
+                var item = new ClipboardItem({
+                    'text/html': htmlBlob,
+                    'text/plain': textBlob
+                });
+                await navigator.clipboard.write([item]);
+                showCopyFeedback('Αντιγράφηκαν στίχοι');
+                return;
+            } catch (err) {
+                // Fall through to plain-text-only path below.
+                console.warn('ClipboardItem write failed, falling back to writeText:', err);
+            }
+        }
+
+        // Fallback: plain text only.
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+            try {
+                await navigator.clipboard.writeText(content.text);
+                showCopyFeedback('Αντιγράφηκαν στίχοι');
+                return;
+            } catch (err) {
+                console.error('writeText failed:', err);
+            }
+        }
+
+        showCopyFeedback('Αποτυχία');
+    }
+
+    function initCopyLyricsButton() {
+        var btn = document.getElementById('copy-lyrics-btn');
+        if (!btn) return;
+        btn.addEventListener('click', function () {
+            // Don't await — let feedback fire after the promise resolves.
+            copyLyricsToClipboard();
+        });
     }
 
     document.addEventListener('DOMContentLoaded', initLyricsToggle);
+    document.addEventListener('DOMContentLoaded', initCopyLyricsButton);
 })();

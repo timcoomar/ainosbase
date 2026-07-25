@@ -353,6 +353,12 @@ template {
 
 body {
     font-size: calc(clamp(1.3rem, 3vw, 1.7rem) * var(--text-scale, 1));
+    // Defense in depth: clip any residual horizontal overflow caused by
+    // child elements (e.g. large-form controls, embedded media, wide tables)
+    // without breaking position: sticky the way overflow-x: hidden would.
+    // The nav layout fix in _nav.scss is the primary guard; this is the backstop.
+    overflow-x: clip;
+    max-width: 100%;
 }
 
 a {

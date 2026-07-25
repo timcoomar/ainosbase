@@ -3,14 +3,15 @@
 <main class="settings-main">
 
     <h1 class="settings-title">Settings</h1>
-    <p class="settings-intro">Choose a font for the site. Your choice is saved in this browser and applies across all pages until you change it.</p>
+    <p class="settings-intro">Your preferences are saved in this browser and apply across all pages until you change them.</p>
 
+    <h2 class="settings-section-title">Font</h2>
     <section class="font-options" id="font-options">
         <button type="button"
                 class="font-option"
                 data-font-key="sofia-sans"
                 data-font-stack="'Sofia Sans', sans-serif">
-            <h2 class="font-option__name">Sofia Sans</h2>
+            <h3 class="font-option__name">Sofia Sans</h3>
             <p class="font-option__sample en">The Ancient of Days reigns over all the earth.</p>
             <p class="font-option__sample el">Αιώνιος Θεός · Σέ λατρεύω</p>
             <p class="font-option__hint">Default · clean modern sans</p>
@@ -20,7 +21,7 @@
                 class="font-option"
                 data-font-key="manrope"
                 data-font-stack="'Manrope', sans-serif">
-            <h2 class="font-option__name">Manrope</h2>
+            <h3 class="font-option__name">Manrope</h3>
             <p class="font-option__sample en">The Ancient of Days reigns over all the earth.</p>
             <p class="font-option__sample el">Αιώνιος Θεός · Σέ λατρεύω</p>
             <p class="font-option__hint">Geometric sans · modern, slightly technical feel</p>
@@ -30,69 +31,123 @@
                 class="font-option"
                 data-font-key="alegreya-sans"
                 data-font-stack="'Alegreya Sans', sans-serif">
-            <h2 class="font-option__name">Alegreya Sans</h2>
+            <h3 class="font-option__name">Alegreya Sans</h3>
             <p class="font-option__sample en">The Ancient of Days reigns over all the earth.</p>
             <p class="font-option__sample el">Αιώνιος Θεός · Σέ λατρεύω</p>
             <p class="font-option__hint">Humanist sans · designed for long-form reading</p>
         </button>
     </section>
 
+    <h2 class="settings-section-title">Default lyrics view</h2>
+    <p class="settings-section-hint">Choose how hymns are shown by default. You can still flip between languages on each hymn page.</p>
+    <section class="lyrics-options" id="lyrics-options">
+        <button type="button" class="lyrics-option" data-lyrics-view="greek">
+            <h3 class="lyrics-option__name">Greek</h3>
+            <p class="lyrics-option__hint">Greek lyrics only (default)</p>
+        </button>
+        <button type="button" class="lyrics-option" data-lyrics-view="english">
+            <h3 class="lyrics-option__name">English</h3>
+            <p class="lyrics-option__hint">English lyrics only</p>
+        </button>
+        <button type="button" class="lyrics-option" data-lyrics-view="both">
+            <h3 class="lyrics-option__name">Greek + English</h3>
+            <p class="lyrics-option__hint">Greek above English, stacked</p>
+        </button>
+    </section>
+
     <p class="settings-status" id="settings-status" role="status" aria-live="polite"></p>
-    <p class="settings-current">Currently using: <span id="settings-current-name">Sofia Sans</span></p>
+    <p class="settings-current">Font: <span id="settings-current-name">Sofia Sans</span> · Lyrics: <span id="settings-current-lyrics">Greek</span></p>
 
 </main>
 
 <script>
 (function () {
+    var STATUS = document.getElementById('settings-status');
+    function flash(message) {
+        if (!STATUS) return;
+        STATUS.textContent = message;
+        clearTimeout(flash._timer);
+        flash._timer = setTimeout(function () { STATUS.textContent = ''; }, 2500);
+    }
+
+    // ── Font ─────────────────────────────────────────────────────
     var FONTS = {
         'sofia-sans':    { stack: "'Sofia Sans', sans-serif",    name: 'Sofia Sans' },
         'manrope':       { stack: "'Manrope', sans-serif",       name: 'Manrope' },
         'alegreya-sans': { stack: "'Alegreya Sans', sans-serif", name: 'Alegreya Sans' }
     };
-    var STORAGE_KEY = 'ainos_font';
+    var FONT_KEY = 'ainos_font';
 
     function applyFont(key) {
         var font = FONTS[key];
         if (!font) return;
         document.documentElement.style.setProperty('--ainos-font', font.stack);
-        var current = document.getElementById('settings-current-name');
-        if (current) current.textContent = font.name;
+        var el = document.getElementById('settings-current-name');
+        if (el) el.textContent = font.name;
     }
-
-    function markActive(key) {
+    function markFontActive(key) {
         document.querySelectorAll('.font-option').forEach(function (btn) {
-            var isActive = btn.dataset.fontKey === key;
-            btn.classList.toggle('is-active', isActive);
-            btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+            var active = btn.dataset.fontKey === key;
+            btn.classList.toggle('is-active', active);
+            btn.setAttribute('aria-pressed', active ? 'true' : 'false');
         });
     }
-
-    function flash(message) {
-        var status = document.getElementById('settings-status');
-        if (!status) return;
-        status.textContent = message;
-        clearTimeout(flash._timer);
-        flash._timer = setTimeout(function () { status.textContent = ''; }, 2500);
-    }
-
-    var savedKey = null;
-    try { savedKey = localStorage.getItem(STORAGE_KEY); } catch (e) {}
-    if (savedKey && FONTS[savedKey]) {
-        markActive(savedKey);
-        var current = document.getElementById('settings-current-name');
-        if (current) current.textContent = FONTS[savedKey].name;
+    var savedFont = null;
+    try { savedFont = localStorage.getItem(FONT_KEY); } catch (e) {}
+    if (savedFont && FONTS[savedFont]) {
+        markFontActive(savedFont);
+        applyFont(savedFont);
     } else {
-        markActive('sofia-sans');
+        markFontActive('sofia-sans');
     }
-
     document.querySelectorAll('.font-option').forEach(function (btn) {
         btn.addEventListener('click', function () {
             var key = btn.dataset.fontKey;
             if (!FONTS[key]) return;
-            try { localStorage.setItem(STORAGE_KEY, key); } catch (e) {}
+            try { localStorage.setItem(FONT_KEY, key); } catch (e) {}
             applyFont(key);
-            markActive(key);
+            markFontActive(key);
             flash('Font saved: ' + FONTS[key].name);
+        });
+    });
+
+    // ── Lyrics view ─────────────────────────────────────────────
+    var LYRICS_VIEWS = {
+        'greek':  { name: 'Greek' },
+        'english':{ name: 'English' },
+        'both':   { name: 'Greek + English' }
+    };
+    var LYRICS_KEY = 'ainos_lyrics_view';
+
+    function applyLyricsView(view) {
+        if (!LYRICS_VIEWS[view]) view = 'greek';
+        document.documentElement.setAttribute('data-lyrics-view', view);
+        var el = document.getElementById('settings-current-lyrics');
+        if (el) el.textContent = LYRICS_VIEWS[view].name;
+    }
+    function markLyricsActive(view) {
+        document.querySelectorAll('.lyrics-option').forEach(function (btn) {
+            var active = btn.dataset.lyricsView === view;
+            btn.classList.toggle('is-active', active);
+            btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+    }
+    var savedView = null;
+    try { savedView = localStorage.getItem(LYRICS_KEY); } catch (e) {}
+    if (savedView && LYRICS_VIEWS[savedView]) {
+        markLyricsActive(savedView);
+        applyLyricsView(savedView);
+    } else {
+        markLyricsActive('greek');
+    }
+    document.querySelectorAll('.lyrics-option').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var view = btn.dataset.lyricsView;
+            if (!LYRICS_VIEWS[view]) return;
+            try { localStorage.setItem(LYRICS_KEY, view); } catch (e) {}
+            applyLyricsView(view);
+            markLyricsActive(view);
+            flash('Lyrics view saved: ' + LYRICS_VIEWS[view].name);
         });
     });
 })();

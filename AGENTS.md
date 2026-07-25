@@ -120,7 +120,7 @@ users/                                   # Statamic users — server-curated, do
 
 ### Field requirements (per `resources/blueprints/collections/hymns/hymn.yaml`)
 - **Required**: `title`, `greek_lyrics`
-- **Always include by convention**: `english_lyrics` (all 16 existing hymns have it, even though the blueprint marks it optional)
+- **Always include by convention**: `english_lyrics` (most existing hymns have it; some currently omit it, so the hymn show page already conditionally hides the GR/EN/GR+EN toggle when `english_lyrics` is empty — see the `hymn-main--no-english` class in `show.antlers.html`)
 - **Optional**: `greek_chords`, `english_chords`, `alternate_translation`, `youtube_greek`, `youtube_english`
 
 ### Filename and slug conventions

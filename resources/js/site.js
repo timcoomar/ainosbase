@@ -105,45 +105,56 @@ document.addEventListener('DOMContentLoaded', applyGreekUppercase);
         });
     }
 
-    function initSaveButton() {
-        var btn = document.getElementById('btn-save-setlist');
-        if (!btn) return;
-        btn.addEventListener('click', function () {
-            var payload = currentPayloadFromDoc();
-            if (!payload) return;
-            var name = prompt('Όνομα λίστας:');
-            if (!name) return;
-            name = name.trim();
-            if (!name) return;
-            var store = getStore();
-            if (store[name] && !confirm('Υπάρχει ήδη λίστα "' + name + '". Αντικατάσταση;')) return;
-            var count = 0;
-            try {
-                var data = JSON.parse(atob(payload));
-                count = Array.isArray(data.hymns) ? data.hymns.length : 0;
-            } catch (e) {}
-            store[name] = { payload: payload, saved_at: new Date().toISOString(), count: count };
-            writeStore(store);
-            // Cap at MAX_SAVED: drop oldest beyond cap
-            var names = Object.keys(store).sort(function (a, b) {
-                return (store[a].saved_at || '').localeCompare(store[b].saved_at || '');
-            });
-            while (names.length > MAX_SAVED) {
-                delete store[names.shift()];
-                writeStore(store);
-            }
-            renderSavedList();
+    function saveCurrentSetlist() {
+        var payload = currentPayloadFromDoc();
+        if (!payload) return;
+        var name = prompt('Όνομα λίστας:');
+        if (!name) return;
+        name = name.trim();
+        if (!name) return;
+        var store = getStore();
+        if (store[name] && !confirm('Υπάρχει ήδη λίστα "' + name + '". Αντικατάσταση;')) return;
+        var count = 0;
+        try {
+            var data = JSON.parse(atob(payload));
+            count = Array.isArray(data.hymns) ? data.hymns.length : 0;
+        } catch (e) {}
+        store[name] = { payload: payload, saved_at: new Date().toISOString(), count: count };
+        writeStore(store);
+        // Cap at MAX_SAVED: drop oldest beyond cap
+        var names = Object.keys(store).sort(function (a, b) {
+            return (store[a].saved_at || '').localeCompare(store[b].saved_at || '');
         });
+        while (names.length > MAX_SAVED) {
+            delete store[names.shift()];
+            writeStore(store);
+        }
+        renderSavedList();
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        initSaveButton();
-        renderSavedList();
+    // Wire the Save button via event delegation on document — the button is
+    // conditionally rendered inside a Livewire-managed region (it only
+    // exists when setlist_indexed is non-empty), so a direct addEventListener
+    // would be lost every time Livewire re-renders the component (e.g. when a
+    // hymn is added or reordered). Delegation survives DOM replacement.
+    function onReady(fn) {
+        if (document.readyState !== 'loading') fn();
+        else document.addEventListener('DOMContentLoaded', fn);
+    }
+
+    onReady(renderSavedList);
+
+    document.addEventListener('click', function (e) {
+        var target = e.target.closest('#btn-save-setlist');
+        if (target) {
+            e.preventDefault();
+            saveCurrentSetlist();
+        }
     });
 
     // Re-render the saved list after Livewire navigations/refreshes that might
-    // swap the builder markup (wire:ignore keeps the section, but ensure
-    // Save button stays wired if Livewire re-renders the launch row).
+    // swap the builder markup (wire:ignore keeps the section, but ensure the
+    // rendered rows stay in sync after livewire:load).
     document.addEventListener('livewire:navigated', renderSavedList);
     document.addEventListener('livewire:load', renderSavedList);
 })();

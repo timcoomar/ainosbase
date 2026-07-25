@@ -143,31 +143,17 @@ A working roadmap for settings/features work on ainosbase.gr. Read `AGENTS.md` f
 
 ---
 
-### #3 ⏳ Favourites / personal shortlist
-**Problem.** A pastor returns to the same ~30 hymns out of a growing catalog. Scrolling the full list every time is friction.
-
-**Goal.** Star toggle on hymn cards (list + show page); "My hymns" filter on the list and search.
-
-**Scope (high level).**
+### #3 ✅ Favourites / personal shortlist — DONE
+**Shipped.** PR https://github.com/timcoomar/ainosbase/pull/13 (merge commit on main, 23:57 2026-07-25).
+- Started early (catalog is still 17 hymns) at Tim's request — useful scaffolding for the upcoming batch content additions even though it doesn't pay off yet.
 - `ainos_favourites` in localStorage = array of slugs.
-- Star toggle component on `hymns/index.antlers.html` and `hymns/show.antlers.html`.
-- Filter control on list page: All / Favourites.
-- Optional: search scope "Favourites only" — depends on whether the Livewire live-search addon allows custom filtering; may need a separate search route or a client-side post-filter.
-
-**Files likely affected.**
-- `resources/views/hymns/index.antlers.html` — star toggle + filter
-- `resources/views/hymns/show.antlers.html` — star toggle
-- `resources/js/site.js` — favourites module
-- `resources/css/partials/_hymn.scss` — star styling
-- Possibly `app/Livewire/Counter.php` style wrapper if a Livewire toggle is preferred to vanilla JS (decide during scoping)
-
-**Acceptance criteria (draft).**
-- [ ] Star a hymn from list or show page → slug stored in localStorage
-- [ ] List page filter shows only starred hymns when active
-- [ ] Favourites survive reload and return visits
-- [ ] AGENTS §14 checks pass; shipped via `feat/favourites` → PR
-
-**Dependencies.** None technically, but **genuine value scales with catalog size**. Recommend **not starting until the catalog is ≥40 hymns** (currently 17). At 17, the full list fits one scroll and favourites adds friction without payoff. Flag to Tim when a batch import brings the count past 40.
+- Star toggle on the hymn show page (in the `.hymn-title-actions` row, before the lyrics toggle + copy button). Click fills the star gold (`#d4a017`); click again un-favourites.
+- Star toggle before each title on `/ymnoi` (list page) — same icon, same behaviour. List row layout switched to flex so the star aligns cleanly with the title's first line.
+- Filter segmented control at the top of `/ymnoi`: **Όλοι** / **Αγαπημένα**. Αγαπημένα hides non-favourite rows. If no favourites exist yet, an empty-state line invites the user to star something.
+- Filter choice persists via `ainos_favourites_filter` in localStorage — reload / navigation keeps it.
+- All JS via event delegation on `document` — single click listener covers every star toggle on both pages and the filter buttons; survives Livewire re-renders without per-button wiring (same pattern as Save Setlist PR #4 and Copy Lyrics PR #6).
+- `aria-pressed`, `aria-label`, `title` all flip with state for screen-reader + tooltip parity.
+- Optional **search scope "Favourites only"** deferred (out of scope for v1) — Livewire live-search addon filtering would need investigation; not blocking. Captured as parked item #8.
 
 ---
 

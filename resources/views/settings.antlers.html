@@ -1,0 +1,99 @@
+{{ partial:partials/nav }}
+
+<main class="settings-main">
+
+    <h1 class="settings-title">Settings</h1>
+    <p class="settings-intro">Choose a font for the site. Your choice is saved in this browser and applies across all pages until you change it.</p>
+
+    <section class="font-options" id="font-options">
+        <button type="button"
+                class="font-option"
+                data-font-key="sofia-sans"
+                data-font-stack="'Sofia Sans', sans-serif">
+            <h2 class="font-option__name">Sofia Sans</h2>
+            <p class="font-option__sample en">The Ancient of Days reigns over all the earth.</p>
+            <p class="font-option__sample el">Αιώνιος Θεός · Σέ λατρεύω</p>
+            <p class="font-option__hint">Default · clean modern sans</p>
+        </button>
+
+        <button type="button"
+                class="font-option"
+                data-font-key="manrope"
+                data-font-stack="'Manrope', sans-serif">
+            <h2 class="font-option__name">Manrope</h2>
+            <p class="font-option__sample en">The Ancient of Days reigns over all the earth.</p>
+            <p class="font-option__sample el">Αιώνιος Θεός · Σέ λατρεύω</p>
+            <p class="font-option__hint">Geometric sans · modern, slightly technical feel</p>
+        </button>
+
+        <button type="button"
+                class="font-option"
+                data-font-key="alegreya-sans"
+                data-font-stack="'Alegreya Sans', sans-serif">
+            <h2 class="font-option__name">Alegreya Sans</h2>
+            <p class="font-option__sample en">The Ancient of Days reigns over all the earth.</p>
+            <p class="font-option__sample el">Αιώνιος Θεός · Σέ λατρεύω</p>
+            <p class="font-option__hint">Humanist sans · designed for long-form reading</p>
+        </button>
+    </section>
+
+    <p class="settings-status" id="settings-status" role="status" aria-live="polite"></p>
+    <p class="settings-current">Currently using: <span id="settings-current-name">Sofia Sans</span></p>
+
+</main>
+
+<script>
+(function () {
+    var FONTS = {
+        'sofia-sans':    { stack: "'Sofia Sans', sans-serif",    name: 'Sofia Sans' },
+        'manrope':       { stack: "'Manrope', sans-serif",       name: 'Manrope' },
+        'alegreya-sans': { stack: "'Alegreya Sans', sans-serif", name: 'Alegreya Sans' }
+    };
+    var STORAGE_KEY = 'ainos_font';
+
+    function applyFont(key) {
+        var font = FONTS[key];
+        if (!font) return;
+        document.documentElement.style.setProperty('--ainos-font', font.stack);
+        var current = document.getElementById('settings-current-name');
+        if (current) current.textContent = font.name;
+    }
+
+    function markActive(key) {
+        document.querySelectorAll('.font-option').forEach(function (btn) {
+            var isActive = btn.dataset.fontKey === key;
+            btn.classList.toggle('is-active', isActive);
+            btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+    }
+
+    function flash(message) {
+        var status = document.getElementById('settings-status');
+        if (!status) return;
+        status.textContent = message;
+        clearTimeout(flash._timer);
+        flash._timer = setTimeout(function () { status.textContent = ''; }, 2500);
+    }
+
+    var savedKey = null;
+    try { savedKey = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+    if (savedKey && FONTS[savedKey]) {
+        markActive(savedKey);
+        var current = document.getElementById('settings-current-name');
+        if (current) current.textContent = FONTS[savedKey].name;
+    } else {
+        markActive('sofia-sans');
+    }
+
+    document.querySelectorAll('.font-option').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var key = btn.dataset.fontKey;
+            if (!FONTS[key]) return;
+            try { localStorage.setItem(STORAGE_KEY, key); } catch (e) {}
+            applyFont(key);
+            markActive(key);
+            flash('Font saved: ' + FONTS[key].name);
+        });
+    });
+})();
+</script>

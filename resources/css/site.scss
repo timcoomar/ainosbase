@@ -8,7 +8,7 @@
 @import 'partials/normalize';
 
 body {
-    font-family: 'Sofia Sans', sans-serif;
+    font-family: var(--ainos-font, 'Sofia Sans', sans-serif);
     min-height:     100svh;
     color:          var(--text-color);
 }
@@ -18,3 +18,4 @@ body {
 @import 'partials/hymn';
 @import 'partials/search';
 @import 'partials/presenter';
+@import 'partials/settings';

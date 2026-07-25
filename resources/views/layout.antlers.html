@@ -8,12 +8,32 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=Sofia+Sans:ital,wght@0,100;0,400;0,700;1,100;1,400;1,700&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Manrope:wght@400;700&family=Sofia+Sans:ital,wght@0,100;0,400;0,700;1,100;1,400;1,700&display=swap"
             rel="stylesheet"
         />
 
         {{ vite src="resources/js/site.js|resources/css/site.scss" }}
         {{ livewire:styles }}
+
+        <script>
+            // Apply persisted font choice before paint to avoid FOUC.
+            // Stored value is a key into FONTS map; the resolved stack is
+            // applied as the --ainos-font CSS custom property on :root.
+            (function () {
+                var FONTS = {
+                    'sofia-sans':    "'Sofia Sans', sans-serif",
+                    'manrope':       "'Manrope', sans-serif",
+                    'alegreya-sans': "'Alegreya Sans', sans-serif"
+                };
+                try {
+                    var key = localStorage.getItem('ainos_font');
+                    var stack = FONTS[key] || null;
+                    if (stack) {
+                        document.documentElement.style.setProperty('--ainos-font', stack);
+                    }
+                } catch (e) { /* localStorage unavailable — silently fall back to default */ }
+            })();
+        </script>
     </head>
     <body class="page-{{ template or slug or 'home' }}">
         <div>

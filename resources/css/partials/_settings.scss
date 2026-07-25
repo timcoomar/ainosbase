@@ -1,0 +1,74 @@
+.settings-main {
+    padding: 2rem 1.7rem;
+    max-width: 60rem;
+    margin: 0 auto;
+}
+
+.settings-title {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    margin: 0 0 .5rem;
+}
+
+.settings-intro {
+    margin: 0 0 2rem;
+    color: var(--text-color);
+}
+
+.font-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    gap: 1.2rem;
+}
+
+.font-option {
+    text-align: left;
+    cursor: pointer;
+    background: white;
+    border: 2px solid rgba(0, 0, 0, .2);
+    border-radius: .8rem;
+    padding: 1.2rem 1.4rem;
+    transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+    font: inherit;
+    color: inherit;
+
+    &:hover {
+        border-color: rgba(0, 0, 0, .6);
+        transform: translateY(-2px);
+    }
+
+    &.is-active {
+        border-color: black;
+        box-shadow: 0 0 0 2px rgba(0, 0, 0, .15);
+    }
+}
+
+.font-option__name {
+    margin: 0 0 .6rem;
+    font-size: 1.3rem;
+}
+
+.font-option__sample {
+    margin: .2rem 0;
+    font-size: 1.1rem;
+
+    &.en { font-style: normal; }
+    &.el { font-style: italic; opacity: .85; }
+}
+
+.font-option__hint {
+    margin: .6rem 0 0;
+    font-size: .9rem;
+    opacity: .6;
+}
+
+.settings-status {
+    margin: 1.5rem 0 .3rem;
+    min-height: 1.2rem;
+    font-weight: 700;
+}
+
+.settings-current {
+    margin: 0;
+    opacity: .7;
+    font-size: .95rem;
+}

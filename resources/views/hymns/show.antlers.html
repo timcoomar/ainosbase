@@ -25,11 +25,21 @@
 </nav>
 
 
-<main class="hymn-main{{ if !english_lyrics }} hymn-main--no-english{{ /if }}">
+<main class="hymn-main{{ if !english_lyrics }} hymn-main--no-english{{ /if }}" data-hymn-slug="{{ slug }}">
     <section class="hymn-lyrics">
         <div class="hymn-title-container">
             <h2 class="hymn-title">{{ title }}</h2>
             <div class="hymn-title-actions">
+                <button type="button"
+                        class="fav-toggle"
+                        data-fav-slug="{{ slug }}"
+                        aria-pressed="false"
+                        aria-label="Προσθήκη στα αγαπημένα"
+                        title="Προσθήκη στα αγαπημένα">
+                    <svg class="fav-toggle__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path class="fav-toggle__star" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>
+                </button>
                 {{ if english_lyrics }}
                 <div class="lyrics-toggle" role="group" aria-label="Lyrics view">
                     <button type="button" class="lyrics-toggle__btn" data-view="greek"  aria-pressed="true">GR</button>

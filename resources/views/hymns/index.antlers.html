@@ -1,22 +1,42 @@
 {{ partial:partials/nav }}
 
-<main class="hymns-main">
+<main class="hymns-main" data-favourites-scope>
+
+    <div class="hymns-filter" role="group" aria-label="Φίλτρο">
+        <button type="button"
+                class="hymns-filter__btn"
+                data-filter="all"
+                aria-pressed="true">
+            Όλοι
+        </button>
+        <button type="button"
+                class="hymns-filter__btn"
+                data-filter="favourites"
+                aria-pressed="false">
+            Αγαπημένα
+        </button>
+    </div>
 
 {{ collection:hymns paginate="true" as="posts" sort="title:asc" }}
 
-    <section class="hymns-posts">
+    <section class="hymns-posts" id="hymns-posts">
 
     {{ posts }}
 
-        <!-- {{ if post_image }}
-        <article class="post" style="background-image:url('{{ post_image | url }}')">
-        {{ else }}
-        <article class="post">
-        {{ /if }} -->
-        <h3 class="post__title">
-            <a href="{{ permalink }}">{{ title }}</a>
-        </h3>
-
+        <article class="post" data-hymn-slug="{{ slug }}">
+            <button type="button"
+                    class="fav-toggle"
+                    data-fav-slug="{{ slug }}"
+                    aria-pressed="false"
+                    aria-label="Προσθήκη στα αγαπημένα"
+                    title="Προσθήκη στα αγαπημένα">
+                <svg class="fav-toggle__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path class="fav-toggle__star" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <h3 class="post__title">
+                <a href="{{ permalink }}">{{ title }}</a>
+            </h3>
         </article>
 
     {{ /posts }}

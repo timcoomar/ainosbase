@@ -309,3 +309,137 @@ document.addEventListener('DOMContentLoaded', applyGreekUppercase);
     document.addEventListener('DOMContentLoaded', initLyricsToggle);
     document.addEventListener('DOMContentLoaded', initCopyLyricsButton);
 })();
+
+// ── Favourites (localStorage-backed) ────────────────────────────────────────
+//
+// Stores an array of hymn slugs in localStorage under `ainos_favourites`.
+// A star toggle on the hymn show page + each row of the hymns list page
+// flips membership. The list page also has an All / Αγαπημένα filter that
+// hides non-favourite rows when Αγαπημένα is active. All listeners are
+// attached via event delegation on document so they survive any future
+// DOM swaps and cover every toggle without per-button wiring.
+
+(function () {
+    var STORAGE_KEY = 'ainos_favourites';
+
+    function getFavs() {
+        try {
+            var raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            return Array.isArray(raw) ? raw : [];
+        } catch (e) { return []; }
+    }
+    function writeFavs(favs) {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(favs)); } catch (e) {}
+    }
+    function isFav(slug) {
+        return getFavs().indexOf(slug) >= 0;
+    }
+    function toggleFav(slug) {
+        var favs = getFavs();
+        var i = favs.indexOf(slug);
+        if (i >= 0) { favs.splice(i, 1); }
+        else { favs.push(slug); }
+        writeFavs(favs);
+        return i < 0; // true if now favourited
+    }
+
+    function paintStar(button, favourited) {
+        if (!button) return;
+        button.setAttribute('aria-pressed', favourited ? 'true' : 'false');
+        button.setAttribute('aria-label',  favourited ? 'Αφαίρεση από αγαπημένα' : 'Προσθήκη στα αγαπημένα');
+        button.setAttribute('title',      favourited ? 'Αφαίρεση από αγαπημένα' : 'Προσθήκη στα αγαπημένα');
+        button.classList.toggle('is-fav', favourited);
+        var star = button.querySelector('.fav-toggle__star');
+        if (star) {
+            star.setAttribute('fill', favourited ? 'currentColor' : 'none');
+        }
+    }
+
+    function paintAllStars() {
+        document.querySelectorAll('[data-fav-slug]').forEach(function (btn) {
+            paintStar(btn, isFav(btn.dataset.favSlug));
+        });
+    }
+
+    function applyListFilter(filter) {
+        var main = document.querySelector('[data-favourites-scope]');
+        if (!main) return;
+        var buttons = main.querySelectorAll('.hymns-filter__btn');
+        buttons.forEach(function (btn) {
+            var active = btn.dataset.filter === filter;
+            btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+            btn.classList.toggle('is-active', active);
+        });
+
+        var posts = document.getElementById('hymns-posts');
+        if (!posts) return;
+        var showFavOnly = (filter === 'favourites');
+        // Persist the active filter so reload / navigation keeps the choice.
+        try { localStorage.setItem('ainos_favourites_filter', showFavOnly ? 'favourites' : 'all'); } catch (e) {}
+        posts.querySelectorAll('.post').forEach(function (article) {
+            var slug = article.dataset.hymnSlug;
+            var show = !showFavOnly || isFav(slug);
+            article.style.display = show ? '' : 'none';
+        });
+        // Surface a friendly empty-state line when filter switches on but
+        // nothing is starred yet.
+        var emptyNotice = document.getElementById('hymns-filter-empty');
+        if (showFavOnly && !posts.querySelector('.post:not([style*="display: none"])')) {
+            if (!emptyNotice) {
+                emptyNotice = document.createElement('p');
+                emptyNotice.id = 'hymns-filter-empty';
+                emptyNotice.className = 'hymns-filter-empty';
+                emptyNotice.textContent = 'Δεν έχετε προσθέσει αγαπημένα ακόμη. Πατήστε το ★ δίπλα σε έναν ύμνο για να τον προσθέσετε.';
+                posts.parentNode.insertBefore(emptyNotice, posts.nextSibling);
+            }
+            emptyNotice.style.display = '';
+        } else if (emptyNotice) {
+            emptyNotice.style.display = 'none';
+        }
+    }
+
+    function onReady(fn) {
+        if (document.readyState !== 'loading') fn();
+        else document.addEventListener('DOMContentLoaded', fn);
+    }
+
+    onReady(function () {
+        paintAllStars();
+
+        // Initialise the list filter to the last-used preference (default 'all')
+        var savedFilter = null;
+        try { savedFilter = localStorage.getItem('ainos_favourites_filter'); } catch (e) {}
+        applyListFilter(savedFilter === 'favourites' ? 'favourites' : 'all');
+    });
+
+    // Single delegated click handler covers both the star toggles and the
+    // list filter buttons (distinguished by data attribute).
+    document.addEventListener('click', function (e) {
+        var starBtn = e.target.closest('[data-fav-slug]');
+        if (starBtn) {
+            e.preventDefault();
+            var slug = starBtn.dataset.favSlug;
+            var nowFav = toggleFav(slug);
+            paintStar(starBtn, nowFav);
+            // Paint any other star pointing at the same slug (e.g. list + show
+            // happen to share; also handles Livewire re-renders post-event).
+            document.querySelectorAll('[data-fav-slug="' + slug + '"]').forEach(function (btn) {
+                if (btn !== starBtn) paintStar(btn, nowFav);
+            });
+            // Re-apply the list filter in case the user just un-favourited
+            // the row they were looking at under the Αγαπημένα filter.
+            var scope = document.querySelector('[data-favourites-scope]');
+            if (scope) {
+                var active = scope.querySelector('.hymns-filter__btn[aria-pressed="true"]');
+                applyListFilter(active ? active.dataset.filter : 'all');
+            }
+            return;
+        }
+
+        var filterBtn = e.target.closest('.hymns-filter__btn');
+        if (filterBtn) {
+            e.preventDefault();
+            applyListFilter(filterBtn.dataset.filter);
+        }
+    });
+})();

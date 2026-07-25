@@ -55,8 +55,25 @@
         </button>
     </section>
 
+    <h2 class="settings-section-title">Μέγεθος κειμένου</h2>
+    <p class="settings-section-hint">Επιλέξτε το μέγεθος του κειμένου. Ισχύει σε όλο τον ιστότοπο εκτός από τις διαφάνειες παρουσίασης.</p>
+    <section class="text-scale-options" id="text-scale-options">
+        <button type="button" class="text-scale-option" data-text-scale="0.9">
+            <span class="text-scale-option__sample text-scale-option__sample--s">Αα</span>
+            <span class="text-scale-option__name">Μικρό</span>
+        </button>
+        <button type="button" class="text-scale-option" data-text-scale="1">
+            <span class="text-scale-option__sample text-scale-option__sample--m">Αα</span>
+            <span class="text-scale-option__name">Κανονικό</span>
+        </button>
+        <button type="button" class="text-scale-option" data-text-scale="1.2">
+            <span class="text-scale-option__sample text-scale-option__sample--l">Αα</span>
+            <span class="text-scale-option__name">Μεγάλο</span>
+        </button>
+    </section>
+
     <p class="settings-status" id="settings-status" role="status" aria-live="polite"></p>
-    <p class="settings-current">Font: <span id="settings-current-name">Sofia Sans</span> · Lyrics: <span id="settings-current-lyrics">Greek</span></p>
+    <p class="settings-current">Font: <span id="settings-current-name">Sofia Sans</span> · Lyrics: <span id="settings-current-lyrics">Greek</span> · Size: <span id="settings-current-scale">Κανονικό</span></p>
 
 </main>
 
@@ -148,6 +165,54 @@
             applyLyricsView(view);
             markLyricsActive(view);
             flash('Lyrics view saved: ' + LYRICS_VIEWS[view].name);
+        });
+    });
+
+    // ── Text scale ──────────────────────────────────────────────
+    // Scales body font-size by setting the --text-scale CSS custom property
+    // on :root. Only the three sanctioned values are allowed; anything else
+    // falls back to 1. The body font-size in _normalize.scss is wired via
+    // `calc(<clamp> * var(--text-scale, 1))`, so all em-based and inherited
+    // content scales, while small UI controls with explicit rem sizes stay
+    // fixed. The presenter/present view is unaffected — it doesn't load this
+    // layout, so --text-scale stays at its stylesheet default of 1.
+    var SCALES = {
+        '0.9': { name: 'Μικρό' },
+        '1':   { name: 'Κανονικό' },
+        '1.2': { name: 'Μεγάλο' }
+    };
+    var SCALE_KEY = 'ainos_text_scale';
+
+    function applyScale(value) {
+        if (!SCALES[String(value)]) value = 1;
+        document.documentElement.style.setProperty('--text-scale', String(value));
+        var el = document.getElementById('settings-current-scale');
+        if (el) el.textContent = SCALES[String(value)].name;
+    }
+    function markScaleActive(value) {
+        var v = String(value);
+        document.querySelectorAll('.text-scale-option').forEach(function (btn) {
+            var active = btn.dataset.textScale === v;
+            btn.classList.toggle('is-active', active);
+            btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+    }
+    var savedScale = null;
+    try { savedScale = localStorage.getItem(SCALE_KEY); } catch (e) {}
+    if (savedScale && SCALES[String(savedScale)]) {
+        markScaleActive(savedScale);
+        applyScale(savedScale);
+    } else {
+        markScaleActive(1);
+    }
+    document.querySelectorAll('.text-scale-option').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var value = btn.dataset.textScale;
+            if (!SCALES[String(value)]) return;
+            try { localStorage.setItem(SCALE_KEY, String(value)); } catch (e) {}
+            applyScale(value);
+            markScaleActive(value);
+            flash('Μέγεθος: ' + SCALES[String(value)].name);
         });
     });
 })();

@@ -32,7 +32,7 @@ A working roadmap for settings/features work on ainosbase.gr. Read `AGENTS.md` f
 
 ## Active queue — work these in order
 
-### #1 ⏳ Default lyrics view on hymn show page (Greek / English / Both)
+### #1 🚧 Default lyrics view on hymn show page (Greek / English / Both)
 **Problem.** `english_lyrics` is captured for every hymn (all 16–17 existing entries have it) and is returned by `/api/hymns`, but `show.antlers.html` only renders `greek_lyrics`. English content is invisible to public visitors. This is a content-surfacing gap dressed as a feature.
 
 **Goal.** Let a user choose their default lyrics presentation on the hymn show page: Greek only, English only, or both. Default applies on every hymn page; per-visit override is one click without leaving the show view.
@@ -188,7 +188,7 @@ A "Print" button that triggers a print-optimised view (no nav, no chords link, j
 
 ## Decision log
 - **Slides font policy (2026-07-25):** Presenter/present views pin to Sofia Sans deliberately. The font switcher is a reading-experience setting and does not extend to the projection surface. Documented in `AGENTS.md` companion material. Do not extend the switcher to slides without Tim's explicit approval.
-- **#1 three sub-decisions proposed (awaiting Tim confirm before #1 starts):**
+- **#1 three sub-decisions CONFIRMED (2026-07-25):**
   1. `alternate_translation` field: **off** the public show page for v1. Document and revisit if requested.
   2. YouTube embeds: **stay visible** in every lyrics mode (supplementary media, not lyrics).
   3. Greek chords PDF link: **stays visible** in every lyrics mode (not language-locked).

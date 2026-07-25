@@ -16,9 +16,10 @@
         {{ livewire:styles }}
 
         <script>
-            // Apply persisted font choice before paint to avoid FOUC.
-            // Stored value is a key into FONTS map; the resolved stack is
-            // applied as the --ainos-font CSS custom property on :root.
+            // Apply persisted user preferences before paint to avoid FOUC.
+            //  - font choice: sets the --ainos-font CSS custom property on :root
+            //  - lyrics view: sets data-lyrics-view on <body> so the show page
+            //    renders the right lyrics immediately (Greek / English / Both)
             (function () {
                 var FONTS = {
                     'sofia-sans':    "'Sofia Sans', sans-serif",
@@ -32,6 +33,17 @@
                         document.documentElement.style.setProperty('--ainos-font', stack);
                     }
                 } catch (e) { /* localStorage unavailable — silently fall back to default */ }
+
+                try {
+                    var view = localStorage.getItem('ainos_lyrics_view');
+                    if (view === 'greek' || view === 'english' || view === 'both') {
+                        document.documentElement.setAttribute('data-lyrics-view', view);
+                    } else {
+                        document.documentElement.setAttribute('data-lyrics-view', 'greek');
+                    }
+                } catch (e) {
+                    document.documentElement.setAttribute('data-lyrics-view', 'greek');
+                }
             })();
         </script>
     </head>

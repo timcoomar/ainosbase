@@ -26,13 +26,25 @@
 
 
 <main class="hymn-main">
-    <section class="greek-version">
+    <section class="hymn-lyrics">
         <div class="hymn-title-container">
             <h2 class="hymn-title">{{ title }}</h2>
-            <button onclick="copyLyrics()"> <img src="{{ config:app:url }}/assets/copy.svg"></button>
+            <div class="hymn-title-actions">
+                <div class="lyrics-toggle" role="group" aria-label="Lyrics view">
+                    <button type="button" class="lyrics-toggle__btn" data-view="greek"  aria-pressed="true">GR</button>
+                    <button type="button" class="lyrics-toggle__btn" data-view="english" aria-pressed="false">EN</button>
+                    <button type="button" class="lyrics-toggle__btn" data-view="both"    aria-pressed="false">GR+EN</button>
+                </div>
+                <button class="copy-btn" aria-label="Copy lyrics"> <img src="{{ config:app:url }}/assets/copy.svg"></button>
+            </div>
         </div>
-        <article class="greek-lyrics" id="greekLyrics">
+
+        <article class="lyrics-block lyrics-greek" id="greekLyrics">
             {{ greek_lyrics }}
+        </article>
+
+        <article class="lyrics-block lyrics-english" id="englishLyrics">
+            {{ english_lyrics }}
         </article>
     </section>
     <section class="hymn-media">
@@ -55,33 +67,3 @@
         {{ /if }}
     </section>
 </main>
-
-<script>
-
-// Plain Text Version:
-
-    // const copyLyrics = async () => {
-    //     let text = document.querySelector('#greekLyrics').textContent;
-    //     console.log(text);
-    //     try {
-    //         await navigator.clipboard.writeText(text);
-    //         console.log('Content copied to clipboard');
-    //     } catch (err) {
-    //         console.error('Failed to copy: ', err);
-    //     }
-    // }
-
-// Rich Text Version:
-const copyLyrics = async () => {
-
-    const content = document.querySelector('#greekLyrics').innerHTML;
-    console.log(content);
-    const blob = new Blob([content], {type: 'text/html'});
-    const richTextInput = new ClipboardItem({'text/html' : blob});
-    await navigator.clipboard.write([richTextInput]).then(() => {
-        //alert("Copied to clipboard");
-    });
-
-}
-
-</script>

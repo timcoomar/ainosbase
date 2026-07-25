@@ -25,16 +25,18 @@
 </nav>
 
 
-<main class="hymn-main">
+<main class="hymn-main{{ if !english_lyrics }} hymn-main--no-english{{ /if }}">
     <section class="hymn-lyrics">
         <div class="hymn-title-container">
             <h2 class="hymn-title">{{ title }}</h2>
             <div class="hymn-title-actions">
+                {{ if english_lyrics }}
                 <div class="lyrics-toggle" role="group" aria-label="Lyrics view">
                     <button type="button" class="lyrics-toggle__btn" data-view="greek"  aria-pressed="true">GR</button>
                     <button type="button" class="lyrics-toggle__btn" data-view="english" aria-pressed="false">EN</button>
                     <button type="button" class="lyrics-toggle__btn" data-view="both"    aria-pressed="false">GR+EN</button>
                 </div>
+                {{ /if }}
                 <button type="button"
                         class="copy-lyrics-btn"
                         id="copy-lyrics-btn"
@@ -53,9 +55,11 @@
             {{ greek_lyrics }}
         </article>
 
+        {{ if english_lyrics }}
         <article class="lyrics-block lyrics-english" id="englishLyrics">
             {{ english_lyrics }}
         </article>
+        {{ /if }}
     </section>
     <section class="hymn-media">
         {{ if greek_chords }}

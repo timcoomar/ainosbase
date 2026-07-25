@@ -168,6 +168,17 @@ html[data-lyrics-view="both"]   .lyrics-english {
     border-top: 1px solid rgba(0,0,0,0.12);
 }
 
+// When a hymn has no English lyrics, the toggle is server-side hidden and
+// the data-lyrics-view attribute (potentially set to 'english' or 'both'
+// from a previous hymn that DID have English) must not blank the page.
+// These rules force Greek visible and English (absent anyway) hidden,
+// regardless of what html[data-lyrics-view] says. Specificity chosen so
+// these win over the attribute-selector rules above without needing !important.
+.hymn-main--no-english {
+    .lyrics-greek   { display: block !important; }
+    .lyrics-english { display: none  !important; }
+}
+
 .hymn-title {
     padding-bottom: 1rem;
     margin-bottom:  .8rem;

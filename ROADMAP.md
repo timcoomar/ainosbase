@@ -171,32 +171,15 @@ A working roadmap for settings/features work on ainosbase.gr. Read `AGENTS.md` f
 
 ---
 
-### #4 ⏳ Text size / reading scale
-**Problem.** No way to enlarge body text for accessibility. Audience skews older.
-
-**Goal.** Three-step text scale (S/M/L) or a slider; persists via localStorage; affects hymn show + list, not slides.
-
-**Scope (high level).**
-- Add a `--text-scale` CSS custom property on `:root`, default `1`.
-- Settings control: three buttons or a range input.
-- Apply scale by using `font-size: calc(<base> * var(--text-scale))` on `body` (or multiply `html` font-size so rem-based sizing flows through).
-- Persist in `localStorage` as `ainos_text_scale`.
-- Early inline `<head>` script sets the variable before paint (same pattern as font switcher).
-
-**Files likely affected.**
-- `resources/views/settings.antlers.html` — new control alongside font + lyrics-view
-- `resources/views/layout.antlers.html` — extend early inline script
-- `resources/css/site.scss` — wire `--text-scale` into `body` font-size
-- `resources/css/partials/_settings.scss` — styles for the new control
-
-**Acceptance criteria (draft).**
-- [ ] Settings page offers a text-scale control (3 steps or slider)
-- [ ] Choice persists and survives reload/navigation/browser restart
-- [ ] No FOUC on first paint
-- [ ] Slides (presenter/present) are unaffected — pinned font + scale
-- [ ] AGENTS §14 checks pass; shipped via `feat/text-scale` → PR
-
-**Dependencies.** None. Can be done independently of #1–#3; the settings page simply grows by one control per feature.
+### #4 ✅ Text size / reading scale — DONE
+**Shipped.** PR https://github.com/timcoomar/ainosbase/pull/7 (merge commit on main, 21:36 2026-07-25).
+- Three-step "Μέγεθος κειμένου" control on `/settings`: **Μικρό** (0.9×), **Κανονικό** (1× default), **Μεγάλο** (1.2×). Each option previews itself via an `Αα` glyph sized to match the resulting body text.
+- Choice persists via `localStorage` (`ainos_text_scale`); survives reload/navigation/browser restart.
+- Early inline `<head>` script in `layout.antlers.html` reads saved value and sets `--text-scale` on `:root` before paint (no FOUC). Only the three sanctioned values (0.9, 1, 1.2) are accepted; anything else falls back to 1.
+- Body font-size in `_normalize.scss` now `calc(clamp(1.3rem, 3vw, 1.7rem) * var(--text-scale, 1))`. All `em`-based and inherited content (paragraphs, h1/h2 via `em` cascade) scales.
+- Small UI controls (lyrics toggle, save button, hints) keep explicit `rem` sizes and stay fixed — they are UI chrome, not content. This is the deliberate behaviour described in the ROADMAP scope.
+- Slides (`presenter/present`) unaffected by design: `present.blade.php` does not load `layout.antlers.html`, so the early inline script never runs there; `--text-scale` stays at the stylesheet default of 1.
+- 'Currently using' line on settings now shows Scale alongside Font and Lyrics view.
 
 ---
 

@@ -352,7 +352,7 @@ template {
 // My code
 
 body {
-    font-size: clamp(1.3rem, 3vw, 1.7rem);
+    font-size: calc(clamp(1.3rem, 3vw, 1.7rem) * var(--text-scale, 1));
 }
 
 a {

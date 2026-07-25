@@ -20,6 +20,10 @@
             //  - font choice: sets the --ainos-font CSS custom property on :root
             //  - lyrics view: sets data-lyrics-view on <body> so the show page
             //    renders the right lyrics immediately (Greek / English / Both)
+            //  - text scale: sets the --text-scale CSS custom property on :root,
+            //    which the body font-size calc multiplies through. Slides are
+            //    unaffected (present.blade.php doesn't load layout.antlers.html,
+            //    so the inline script never runs there — scale stays at default 1)
             (function () {
                 var FONTS = {
                     'sofia-sans':    "'Sofia Sans', sans-serif",
@@ -44,6 +48,14 @@
                 } catch (e) {
                     document.documentElement.setAttribute('data-lyrics-view', 'greek');
                 }
+
+                try {
+                    var scale = parseFloat(localStorage.getItem('ainos_text_scale'));
+                    // Allow only the three sanctioned values; anything else falls back to 1.
+                    if (scale === 0.9 || scale === 1 || scale === 1.2) {
+                        document.documentElement.style.setProperty('--text-scale', String(scale));
+                    }
+                } catch (e) { /* keep default --text-scale: 1 from stylesheet */ }
             })();
         </script>
     </head>

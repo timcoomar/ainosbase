@@ -122,3 +122,56 @@
     font-size: .9rem;
     opacity: .6;
 }
+
+.text-scale-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: 1rem;
+}
+
+.text-scale-option {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    text-align: left;
+    cursor: pointer;
+    background: white;
+    border: 2px solid rgba(0, 0, 0, .2);
+    border-radius: .8rem;
+    padding: 1rem 1.2rem;
+    transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+    font: inherit;
+    color: inherit;
+
+    &:hover {
+        border-color: rgba(0, 0, 0, .6);
+        transform: translateY(-2px);
+    }
+
+    &.is-active {
+        border-color: black;
+        box-shadow: 0 0 0 2px rgba(0, 0, 0, .15);
+    }
+}
+
+.text-scale-option__sample {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, .05);
+    font-weight: 700;
+    line-height: 1;
+    flex-shrink: 0;
+
+    &--s { font-size: .9rem; }
+    &--m { font-size: 1.1rem; }
+    &--l { font-size: 1.4rem; }
+}
+
+.text-scale-option__name {
+    margin: 0;
+    font-size: 1rem;
+}

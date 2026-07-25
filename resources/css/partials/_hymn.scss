@@ -57,20 +57,58 @@
 
 .hymn-title-container {
     position: relative;
+}
 
-    button {
-        background: none;
-        border: 0;
-        position: relative;
-        top: 4px;
+.copy-lyrics-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    background: none;
+    border: 1px solid transparent;
+    border-radius: .4rem;
+    padding: .2rem .4rem;
+    cursor: pointer;
+    color: rgba(0, 0, 0, .35);
+    font: inherit;
+    line-height: 1;
+    transition: color .15s ease, background .15s ease, border-color .15s ease;
 
-        &:hover {
-            cursor: pointer;
-        }
+    &__icon {
+        width: 1rem;
+        height: 1rem;
+        flex-shrink: 0;
+    }
 
-        img {
-            max-width: 100%;
-        }
+    &__label {
+        font-size: .78rem;
+        letter-spacing: .04em;
+        line-height: 1;
+    }
+
+    &:hover {
+        color: rgba(0, 0, 0, .85);
+        background: rgba(0, 0, 0, .04);
+        border-color: rgba(0, 0, 0, .15);
+    }
+
+    &:active {
+        background: rgba(0, 0, 0, .08);
+    }
+}
+
+.copy-feedback {
+    font-size: .78rem;
+    letter-spacing: .04em;
+    color: rgba(0, 0, 0, .55);
+    opacity: 0;
+    transform: translateY(-2px);
+    transition: opacity .15s ease, transform .15s ease;
+    pointer-events: none;
+    white-space: nowrap;
+
+    &.is-visible {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 

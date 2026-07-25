@@ -130,6 +130,38 @@ A working roadmap for settings/features work on ainosbase.gr. Read `AGENTS.md` f
 
 ---
 
+### 🚧 Copy button refresh (interstitial task)
+Interstitial refinement requested by Tim before continuing the active queue (June 26, 2026).
+
+**Problem.** The post-#1 copy button on the hymn show page (`show.antlers.html`) is brittle: it writes only `text/html`, has no plain-text fallback, and fails silently on browsers that reject `ClipboardItem({'text/html'})`. Visually it's just a bare `copy.svg` icon hidden in the title row with a `top: 4px` shim — it doesn't read as a deliberate control.
+
+**Goal.** A new copy button that:
+1. Writes **both** `text/html` (preserves italic chorus + paragraph breaks, for Word/Gmail/Slack) **and** `text/plain` (for plain-text editors), so paste destinations pick whatever they support.
+2. Falls back to `navigator.clipboard.writeText(plainText)` when `ClipboardItem`/`write` rejects (older Firefox, insecure contexts).
+3. Shows visible success/failure feedback (a small chip that fades, not an `alert()`).
+4. Respects the active lyrics view (Greek in GR, English in EN, Greek + blank line + English in GR+EN).
+5. Uses the label "Αντιγραφή στίχων" but **discretely** — small icon-led control with full Greek label as the visible caption at small caption-style type, recessed colour, hover-brightens. Matches the visual language of the GR/EN/GR+EN toggle and Save button (thin border, black on white, Sofia Sans).
+
+**Files affected.**
+- `resources/views/hymns/show.antlers.html` — new button markup (inline SVG icon + label span) + feedback chip element
+- `resources/js/site.js` — extract copy logic from `initLyricsToggle` into a dedicated `initCopyLyricsButton`; add plain-text builder + fallback + feedback
+- `resources/css/partials/_hymn.scss` — replace the catch-all `button { ... }` inside `.hymn-title-container` with focused `.copy-lyrics-btn` styling; add `.copy-feedback` chip styling
+
+**Acceptance criteria.**
+- [ ] Visible new button on hymn show page; full label "Αντιγραφή στίχων" rendered but visually discrete (small, caption-style, low-opacity until hover)
+- [ ] Clicking copies rich text (HTML with `<em>` chorus italic + `<p>` paragraph structure) AND plain text (verses separated by `\n\n`, Greek and English separated by blank line in GR+EN mode)
+- [ ] Pastes correctly into Word / Gmail (rich formatting preserved) and into Notes / WhatsApp plain-text composer (no HTML tags in text)
+- [ ] Falls back to plain-text copy on browsers that reject `ClipboardItem` (test in current Firefox if available)
+- [ ] Shows "Αντιγράφηκαν στίχοι" chip near the button on success; "Αποτυχία" chip on failure; chip auto-hides after ~2s
+- [ ] Respects the active lyrics view (Greek / English / Both)
+- [ ] Old `.copy-btn` + `copy.svg` removed cleanly; no orphan styles or JS references
+- [ ] All key pages still return 200; `vendor/bin/pint --dirty` clean; `php artisan test` passes; `php artisan route:list` unchanged
+- [ ] Shipped via `feat/copy-button-refresh` branch → PR → merge
+
+**Dependencies.** None.
+
+---
+
 ### #3 ⏳ Favourites / personal shortlist
 **Problem.** A pastor returns to the same ~30 hymns out of a growing catalog. Scrolling the full list every time is friction.
 

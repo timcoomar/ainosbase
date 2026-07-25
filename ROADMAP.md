@@ -32,8 +32,16 @@ A working roadmap for settings/features work on ainosbase.gr. Read `AGENTS.md` f
 
 ## Active queue — work these in order
 
-### #1 🚧 Default lyrics view on hymn show page (Greek / English / Both)
-**Problem.** `english_lyrics` is captured for every hymn (all 16–17 existing entries have it) and is returned by `/api/hymns`, but `show.antlers.html` only renders `greek_lyrics`. English content is invisible to public visitors. This is a content-surfacing gap dressed as a feature.
+### #1 ✅ Default lyrics view on hymn show page (Greek / English / Both) — DONE
+**Shipped.** PR https://github.com/timcoomar/ainosbase/pull/2 (merge commit on main).
+- Settings page has a "Default lyrics view" control alongside the font switcher.
+- Hymn show page renders both `greek_lyrics` and `english_lyrics` server-side (English was previously invisible — content-surfacing gap now closed).
+- Per-visit segmented toggle on the show page (GR / EN / GR+EN) flips view without a round-trip and persists as the new default.
+- Both mode: stacked (Greek above English). Side-by-side on desktop deferred.
+- Copy-to-clipboard copies whichever lyrics are visible.
+- Early inline script sets `html[data-lyrics-view]` from `localStorage.ainos_lyrics_view` before paint.
+
+**Decisions confirmed (see Decision log):** `alternate_translation` off v1; YouTube embeds + greek_chords link remain visible in every lyrics mode.
 
 **Goal.** Let a user choose their default lyrics presentation on the hymn show page: Greek only, English only, or both. Default applies on every hymn page; per-visit override is one click without leaving the show view.
 

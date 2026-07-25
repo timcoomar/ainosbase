@@ -3,6 +3,12 @@ name: Deploy to Production
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      note:
+        description: "Optional note (visible in the Actions run list)"
+        required: false
+        default: ""
 
 jobs:
   deploy:

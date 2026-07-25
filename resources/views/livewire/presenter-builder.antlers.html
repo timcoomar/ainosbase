@@ -70,15 +70,45 @@
             {{ /setlist_indexed }}
         </ul>
 
-        <a href="{{ launch_url }}"
-           target="_blank"
-           rel="noopener"
-           class="btn-launch">
-            Έναρξη Παρουσίασης →
-        </a>
+        <div class="builder-launch-row">
+            <a href="{{ launch_url }}"
+               target="_blank"
+               rel="noopener"
+               class="btn-launch">
+                Έναρξη Παρουσίασης →
+            </a>
+            <button type="button"
+                    class="btn-save-setlist"
+                    id="btn-save-setlist"
+                    title="Αποθήκευση αυτής της λίστας για αργότερα">
+                Αποθήκευση λίστας
+            </button>
+        </div>
         {{ else }}
         <p class="setlist-empty">Αναζητήστε και προσθέστε ύμνους για να ξεκινήσετε.</p>
         {{ /if }}
+    </div>
+
+    {{# ── Saved setlists (localStorage-backed, client-side) ── #}}
+    {{# Lives inside the same root div — Livewire only allows one root element. #}}
+    <div wire:ignore>
+        <section class="saved-setlists" id="saved-setlists" hidden data-cap="20">
+            <h2 class="greek-uppercase">Αποθηκευμένες λίστες</h2>
+            <p class="saved-empty" hidden>Δεν έχετε αποθηκεύσει καμία λίστα ακόμη.</p>
+            <ul class="saved-list" id="saved-list"></ul>
+        </section>
+
+        <template id="saved-row-tmpl">
+            <li class="saved-row" data-name="">
+                <span class="saved-name"></span>
+                <span class="saved-meta"></span>
+                <div class="saved-actions">
+                    <button type="button" class="btn-saved-load">Φόρτωση</button>
+                    <a class="btn-saved-open" target="_blank" rel="noopener">Παρουσίαση</a>
+                    <button type="button" class="btn-saved-delete" title="Διαγραφή">×</button>
+                </div>
+            </li>
+        </template>
     </div>
 
 </div>

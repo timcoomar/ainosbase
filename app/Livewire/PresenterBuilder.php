@@ -2,19 +2,24 @@
 
 namespace App\Livewire;
 
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Statamic\Facades\Entry;
 
 class PresenterBuilder extends Component
 {
     public string $q = '';
+
     public array $setlist = [];
+
     public string $language = 'greek';
 
     public function addHymn(string $slug): void
     {
         foreach ($this->setlist as $item) {
-            if ($item['slug'] === $slug) return;
+            if ($item['slug'] === $slug) {
+                return;
+            }
         }
 
         $entry = Entry::query()
@@ -24,7 +29,7 @@ class PresenterBuilder extends Component
 
         if ($entry) {
             $this->setlist[] = [
-                'slug'  => $slug,
+                'slug' => $slug,
                 'title' => $entry->get('title'),
             ];
         }
@@ -38,19 +43,23 @@ class PresenterBuilder extends Component
 
     public function moveUp(int $pos): void
     {
-        if ($pos === 0) return;
+        if ($pos === 0) {
+            return;
+        }
         [$this->setlist[$pos - 1], $this->setlist[$pos]] = [$this->setlist[$pos], $this->setlist[$pos - 1]];
     }
 
     public function moveDown(int $pos): void
     {
-        if ($pos >= count($this->setlist) - 1) return;
+        if ($pos >= count($this->setlist) - 1) {
+            return;
+        }
         [$this->setlist[$pos], $this->setlist[$pos + 1]] = [$this->setlist[$pos + 1], $this->setlist[$pos]];
     }
 
     public function render()
     {
-        $q           = mb_strtolower(trim($this->q));
+        $q = mb_strtolower(trim($this->q));
         $setlistSlugs = array_column($this->setlist, 'slug');
 
         $results = [];
@@ -58,14 +67,13 @@ class PresenterBuilder extends Component
             $results = Entry::query()
                 ->where('collection', 'hymns')
                 ->get()
-                ->filter(fn($e) =>
-                    str_contains(mb_strtolower($e->get('title', '')), $q) ||
+                ->filter(fn ($e) => str_contains(mb_strtolower($e->get('title', '')), $q) ||
                     str_contains(mb_strtolower($e->get('greek_lyrics', '')), $q)
                 )
                 ->take(8)
-                ->map(fn($e) => [
-                    'slug'         => $e->slug(),
-                    'title'        => $e->get('title'),
+                ->map(fn ($e) => [
+                    'slug' => $e->slug(),
+                    'title' => $e->get('title'),
                     'already_added' => in_array($e->slug(), $setlistSlugs),
                 ])
                 ->values()
@@ -74,11 +82,11 @@ class PresenterBuilder extends Component
 
         $total = count($this->setlist);
         $setlistIndexed = array_map(
-            fn($item, $i) => array_merge($item, [
-                'pos'      => $i,
-                'number'   => $i + 1,
+            fn ($item, $i) => array_merge($item, [
+                'pos' => $i,
+                'number' => $i + 1,
                 'is_first' => $i === 0,
-                'is_last'  => $i === $total - 1,
+                'is_last' => $i === $total - 1,
             ]),
             $this->setlist,
             array_keys($this->setlist)
@@ -86,13 +94,47 @@ class PresenterBuilder extends Component
 
         $payload = base64_encode(json_encode([
             'hymns' => array_values($this->setlist),
-            'lang'  => $this->language,
+            'lang' => $this->language,
         ]));
 
         return view('livewire.presenter-builder', [
-            'results'         => $results,
+            'results' => $results,
             'setlist_indexed' => $setlistIndexed,
-            'launch_url'      => url('/presenter/present') . '#' . $payload,
+            'launch_url' => url('/presenter/present').'#'.$payload,
+            'payload' => $payload,
         ]);
+    }
+
+    /**
+     * Load a setlist from a base64 payload produced by the builder's launch URL
+     * or by a previously-saved entry from localStorage. Dispatched from the
+     * client via Livewire.dispatch('load-setlist', { payload }).
+     */
+    #[On('load-setlist')]
+    public function loadSetlist(string $payload): void
+    {
+        $decoded = base64_decode($payload, true);
+        if ($decoded === false) {
+            return;
+        }
+        $data = json_decode($decoded, true);
+        if (! is_array($data)) {
+            return;
+        }
+
+        $hymns = $data['hymns'] ?? [];
+        $this->setlist = collect($hymns)
+            ->filter(fn ($h) => is_array($h) && ! empty($h['slug']) && ! empty($h['title']))
+            ->map(fn ($h) => [
+                'slug' => $h['slug'],
+                'title' => $h['title'],
+            ])
+            ->values()
+            ->all();
+
+        $lang = $data['lang'] ?? 'greek';
+        if (in_array($lang, ['greek', 'english', 'both'], true)) {
+            $this->language = $lang;
+        }
     }
 }
